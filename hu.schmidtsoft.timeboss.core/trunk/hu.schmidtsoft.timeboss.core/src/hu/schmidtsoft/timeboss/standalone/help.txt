@@ -1,0 +1,28 @@
+Hello, this is Timeboss's help.
+
+Goal:
+
+Timeboss's goal is not to let you work and don't make notes what you are doing. In other words it enforces you to make notes.
+
+
+Usage:
+Timeboss is to be run on your GUI as a tray icon.
+
+1. You have to install a tray icon holder on your desktop that is compatible with SWT.
+2. Run timeboss as: java -jar timeboss.jar
+ - you really should install it as autostart. Installing autostart depends on your operating system
+3. The application will be shown as an icon. At first usage it will pop up a window that requests you to set an activity
+4. Clicking on tray icon shows and hides main window
+5. On the first three lines you can see your latest activity logged by the system
+5. input project and activity data into the fields and press  "Save activity log" to log activity
+ - project, title, issue, details: whatever you like. The title field is mandatory!
+ - elapsed time: time already spent on the job. Mainly it should be 0 as you log your activity _before_ doing anything right? :-)
+ - remaining time: time planned to be spent on the job. You should use small values and re-enter the same job if exceeded
+ - previous activity can be cancelled simply by saving a new activity.
+ - activities in the past are not editable any more (hackers may use vi to edit them...). You have to log your activity when you are doing it right?
+6. Press Reload to insert last activity's data into the fields again
+7. not working: log that you are on a rest. Timeboss will not bother you for the given period
+8. file/configuration: you can set the default job interval and the alert sleep time
+9. file/exit: exits the Timeboss program
+10. Timeboss will warn you using a pop up window when your last activity or rest is finished and you should log your current activity again.
+11. The product of timeboss is in directory ~/.timeboss/logs. Each Timeboss entry is an xml file named after its timestamp in GMT. You can easily discover the structure of the files. Time is in format of Java's System.currentTimeMillis(). Currently there is no software that handles this data. Sorry! _Having_ the data isn't fun enough?
