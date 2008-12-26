@@ -186,6 +186,11 @@ public class TrayIcon {
 					}
 				}catch(InterruptedException e){}
 			}
+		}else
+		{
+			System.err.println("Swing Tray icon is not supported by your platform. Timeboss exits");
+			log.log(Level.SEVERE, "Swing Tray icon is not supported by your platform. Timeboss exits");
+			System.exit(-1);
 		}
 	}
 }
