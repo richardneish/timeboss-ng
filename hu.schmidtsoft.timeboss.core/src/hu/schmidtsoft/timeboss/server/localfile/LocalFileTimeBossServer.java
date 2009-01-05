@@ -37,12 +37,25 @@ public class LocalFileTimeBossServer extends AbstractTimeBossServer {
 			}});
 		if(files.size()>0)
 		{
-			File f=files.get(files.size()-1);
-			try {
-				Activity act=new Activity(UtilFile.loadFile(f));
-				setLastActivity(act);
-			} catch (Exception e) {
-				Logger.getLogger(LocalFileTimeBossServer.class.getName()).log(Level.SEVERE, "saving activity", e);
+			Activity last=null;
+			int i=files.size()-1;
+			while(last==null&&i>=0)
+			{
+				File f=files.get(files.size()-1);
+				try {
+					Activity act=new Activity(UtilFile.loadFile(f));
+					if(act.getWork())
+					{
+						last=act;
+					}
+				} catch (Exception e) {
+					Logger.getLogger(LocalFileTimeBossServer.class.getName()).log(Level.SEVERE, "loading last activity", e);
+				}
+				--i;
+			}
+			if(last!=null)
+			{
+				setLastActivity(last);
 			}
 		}
 	}
