@@ -24,6 +24,10 @@ public abstract class AbstractTimeBossServer implements ITimeBossServer {
 	public synchronized void alertOpened() {
 		lastAlertTime=System.currentTimeMillis();
 	}
+	protected void setLastRealActivity(Activity activity)
+	{
+		lastRealActivity=activity;
+	}
 	protected void setLastActivity(Activity activity)
 	{
 		lastActivity=activity;
