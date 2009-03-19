@@ -90,4 +90,34 @@ public class LocalFileTimeBossServer extends AbstractTimeBossServer {
 		UtilFile.saveFile(f, activity.toXml());
 	}
 
+	@Override
+	public List<Activity> getAllActivitiesLogged() {
+		File[] fs = logs.listFiles();
+		List<File> files=new ArrayList<File>();
+		List<Activity> ret=new ArrayList<Activity>();
+		if (fs != null) {
+			for (File f : fs) {
+				files.add(f);
+			}
+		}
+		Collections.sort(files, new Comparator<File>(){
+			@Override
+			public int compare(File o1, File o2) {
+				return o1.getName().compareTo(o2.getName());
+			}});
+		if(files.size()>0)
+		{
+			for(int i=0;i<files.size();++i)
+			{
+				File f=files.get(i);
+				try {
+					Activity act=new Activity(UtilFile.loadFile(f));
+					ret.add(act);
+				} catch (Exception e) {
+					Logger.getLogger(LocalFileTimeBossServer.class.getName()).log(Level.SEVERE, "loading last activity", e);
+				}
+			}
+		}
+		return ret;
+	}
 }

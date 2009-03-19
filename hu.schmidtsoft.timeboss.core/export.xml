@@ -16,6 +16,7 @@
 			<fileset file="${projectDir}/gpl-v3.txt"></fileset>
 			<zipfileset file="${projectDir}/lib/jaxen-1.1.1.jar" prefix="lib"></zipfileset>
 			<zipfileset file="${projectDir}/lib/dom4j-1.6.1.jar" prefix="lib"></zipfileset>
+			<zipfileset file="${projectDir}/lib/javacsv.jar" prefix="lib"></zipfileset>
 			<zipfileset dir="${projectDir}/src" prefix="src"></zipfileset>
 		</zip>
     </target>
@@ -29,6 +30,7 @@
             <fileset dir="${projectDir}/bin"/>
             <zipfileset excludes="META-INF/*.SF" src="${projectDir}/lib/dom4j-1.6.1.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${projectDir}/lib/jaxen-1.1.1.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="${projectDir}/lib/javacsv.jar"/>
         </jar>
     </target>
 </project>

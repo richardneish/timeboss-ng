@@ -1,5 +1,6 @@
 package hu.schmidtsoft.timeboss.standalone;
 
+import hu.schmidtsoft.timeboss.processor.Doprocess;
 import hu.schmidtsoft.timeboss.server.ITimeBossServer;
 import hu.schmidtsoft.timeboss.server.TimeBossConfiguration;
 import hu.schmidtsoft.timeboss.server.TimeBossInstance;
@@ -11,14 +12,20 @@ import hu.schmidtsoft.timeboss.util.UtilEvent;
 import hu.schmidtsoft.timeboss.util.UtilEventListener;
 import hu.schmidtsoft.timeboss.util.UtilTime;
 
+import java.awt.FileDialog;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -34,19 +41,7 @@ public class TimeBossApplication extends JFrame implements MyRunnable {
 	DisplayState state = new DisplayState();
 	UtilEvent setTitleEvent;
 
-	// QueryDialog dialogOpen;
-	public TimeBossApplication(UtilEvent setTitleEvent) {
-		this.setTitleEvent = setTitleEvent;
-		setTitleEvent.addListener(new UtilEventListener() {
-
-			@Override
-			public void eventHappened(Object msg) {
-				state = (DisplayState) msg;
-				updateLabel();
-			}
-		});
-		updateLabel();
-		createMenu();
+	public static TimeBossInstance createInstance(UtilEvent setTitleEvent) {
 		File dir = new File(System.getProperty("user.home"));
 		dir = new File(dir, TimeBossApplication.applicatonDir);
 		dir.mkdirs();
@@ -62,17 +57,33 @@ public class TimeBossApplication extends JFrame implements MyRunnable {
 				bs = config.toXml();
 				server.setPreferences(bs);
 			} catch (IOException e1) {
-				Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-						"Saving preferences", e);
+				Logger.getLogger(TimeBossApplication.class.getName()).log(
+						Level.SEVERE, "Saving preferences", e);
 			}
 		}
-		instance = new TimeBossInstance(server, config);
+		TimeBossInstance instance = new TimeBossInstance(server, config);
+		return instance;
+	}
+
+	// QueryDialog dialogOpen;
+	public TimeBossApplication(UtilEvent setTitleEvent) {
+		this.setTitleEvent = setTitleEvent;
+		setTitleEvent.addListener(new UtilEventListener() {
+
+			@Override
+			public void eventHappened(Object msg) {
+				state = (DisplayState) msg;
+				updateLabel();
+			}
+		});
+		updateLabel();
+		createMenu();
+		instance = createInstance(setTitleEvent);
 		createContents();
 		pack();
 		setLocationRelativeTo(null);
 		initTimer();
 		instance.getChangedEvent().addListener(new UtilEventListener() {
-
 			@Override
 			public void eventHappened(Object msg) {
 				timerThread.breakSleep();
@@ -113,12 +124,10 @@ public class TimeBossApplication extends JFrame implements MyRunnable {
 	static Logger log = Logger.getLogger(TimeBossApplication.class.getName());
 
 	QueryDialog dialogShown;
-	
 
 	public synchronized QueryDialog getDialogShown() {
-		if(dialogShown==null)
-		{
-			dialogShown=new QueryDialog(this, instance);
+		if (dialogShown == null) {
+			dialogShown = new QueryDialog(this, instance);
 		}
 		return dialogShown;
 	}
@@ -150,6 +159,15 @@ public class TimeBossApplication extends JFrame implements MyRunnable {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				openConfigureDialog();
+			}
+		});
+
+		JMenuItem export = new JMenuItem("Export...");
+		fileMenuHeader.add(export);
+		export.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openExportDialog();
 			}
 		});
 
@@ -216,6 +234,41 @@ public class TimeBossApplication extends JFrame implements MyRunnable {
 
 	protected void openConfigureDialog() {
 		new ConfigureDialog(this, instance).setVisible(true);
+	}
+
+	protected void openExportDialog() {
+		final JFileChooser fc = new JFileChooser();
+		int returnVal = fc.showSaveDialog(this);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			final File f = fc.getSelectedFile();
+			try {
+				ExecutorService service = Executors.newSingleThreadExecutor();
+				try {
+					final ProcessingDialog pd = new ProcessingDialog(this);
+					Future<?> future = service.submit(new Callable<Object>() {
+						@Override
+						public Object call() throws Exception {
+							String csv = new Doprocess()
+									.processEntries(instance);
+							UtilFile.saveFile(f, csv);
+							while(!pd.isVisible()&&!pd.isClosed())
+							{
+								Thread.sleep(100);
+							}
+							pd.setVisible(false);
+							return null;
+						}
+					});
+					pd.setVisible(true);
+					pd.setClosed(true);
+				} finally {
+					service.shutdown();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**

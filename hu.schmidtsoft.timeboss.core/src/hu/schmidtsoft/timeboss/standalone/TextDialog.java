@@ -6,8 +6,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 /**
- * Standalone dialog for initiating a search on a Wings model. This dialog is
- * popped up when activating <code>WingsSearchAction</code>
  * 
  * @author rizsi
  * 

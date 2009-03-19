@@ -13,10 +13,38 @@ import org.dom4j.Element;
 public class Activity {
 	private String user;
 	private String issue;
+	private String project;
+	private boolean work;
+	private long pre;
+	private String title;
+	private String description;
+	private long startTime;
+	private long length;
+	public class Processed
+	{
+		private long from;
+		public long getFrom() {
+			return from;
+		}
+		public void setFrom(long from) {
+			this.from = from;
+		}
+		public long getTo() {
+			return to;
+		}
+		public void setTo(long to) {
+			this.to = to;
+			if(to<from)
+			{
+				from=to;
+			}
+		}
+		private long to;
+	}
+	public final Processed processed=new Processed();
 	public String getIssue() {
 		return issue;
 	}
-	private String project;
 	public String getProject() {
 		return project;
 	}
@@ -44,12 +72,12 @@ public class Activity {
 	public Activity(byte[] bytes) throws MalformedURLException, DocumentException {
 		fromXml(bytes);
 	}
-	private boolean work;
-	private long pre;
+	public long getPre() {
+		return pre;
+	}
 	public boolean getWork() {
 		return work;
 	}
-	private String title;
 	public String getTitle() {
 		return title;
 	}
@@ -62,9 +90,6 @@ public class Activity {
 	public long getLength() {
 		return length;
 	}
-	private String description;
-	private long startTime;
-	private long length;
 	public byte[] toXml() throws IOException {
 		Document doc=DocumentHelper.createDocument();
 		Element root=doc.addElement("activity");

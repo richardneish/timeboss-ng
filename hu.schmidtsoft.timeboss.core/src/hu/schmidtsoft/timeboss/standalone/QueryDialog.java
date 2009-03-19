@@ -11,8 +11,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 /**
- * Standalone dialog for initiating a search on a Wings model. This dialog is
- * popped up when activating <code>WingsSearchAction</code>
  * 
  * @author rizsi
  * 

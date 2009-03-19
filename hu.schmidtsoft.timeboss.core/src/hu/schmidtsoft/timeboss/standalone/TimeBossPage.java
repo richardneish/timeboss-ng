@@ -37,14 +37,24 @@ public class TimeBossPage {
 				{
 					throw new RuntimeException("title must be set!");
 				}
+				long lengthL=Long.parseLong(length.getText());
+				long preL=Long.parseLong(pre.getText());
+				if(lengthL<0)
+				{
+					throw new NumberFormatException("Time can not be negative");
+				}
+				if(preL<0)
+				{
+					throw new NumberFormatException("Time can not be negative");
+				}
 				Activity toSave=new Activity(true,
 						project.getText(),
 						title.getText(),
 						description.getText(),
 						issue.getText(),
 						System.currentTimeMillis(),
-						Long.parseLong(length.getText()),
-						Long.parseLong(pre.getText())
+						lengthL,
+						preL
 						);
 				instance.getServer().saveActivity(toSave);
 			}catch(Exception ex)
@@ -69,6 +79,10 @@ public class TimeBossPage {
 			try
 			{
 				long time=Long.parseLong(notWorkingTime.getText());
+				if(time<0)
+				{
+					throw new NumberFormatException("Time can not be negative");
+				}
 				instance.getServer().saveActivity(new Activity(
 						false,
 						"",

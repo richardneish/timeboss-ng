@@ -19,8 +19,6 @@ import hu.schmidtsoft.timeboss.server.TimeBossConfiguration;
 import hu.schmidtsoft.timeboss.server.TimeBossInstance;
 
 /**
- * Standalone dialog for initiating a search on a Wings model. This dialog is
- * popped up when activating <code>WingsSearchAction</code>
  * 
  * @author rizsi
  * 

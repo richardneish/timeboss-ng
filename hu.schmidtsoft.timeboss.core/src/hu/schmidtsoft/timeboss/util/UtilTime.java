@@ -17,6 +17,22 @@ public class UtilTime {
 		}
 		return ""+new Date(lastActivityEntryTime);
 	}
+	/**
+	 * Convert timestamp to user readable time.
+	 * The format is: yyyy-MM-dd-HH:mm:ss
+	 * The time zone used is the system's default that can be queried using getDefaultTimeZone
+	 * @param lastActivityEntryTime
+	 * @return
+	 */
+	public static String timeToCSVString(long lastActivityEntryTime) {
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+//		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		return sdf.format(new Date(lastActivityEntryTime));
+	}
+	public static TimeZone getDefaultTimeZone() {
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+		return sdf.getTimeZone();
+	}
 
 	public static String timeToFileName(long startTime) {
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss_SSS");

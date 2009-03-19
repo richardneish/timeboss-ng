@@ -25,4 +25,5 @@ Timeboss is to be run on your GUI as a tray icon.
 8. file/configuration: you can set the default job interval and the alert sleep time
 9. file/exit: exits the Timeboss program
 10. Timeboss will warn you using a pop up window when your last activity or rest is finished and you should log your current activity again.
-11. The product of timeboss is in directory ~/.timeboss/logs. Each Timeboss entry is an xml file named after its timestamp in GMT. You can easily discover the structure of the files. Time is in format of Java's System.currentTimeMillis(). Currently there is no software that handles this data. Sorry! _Having_ the data isn't fun enough?
+11. The product of timeboss is in directory ~/.timeboss/logs. Each Timeboss entry is an xml file named after its timestamp in GMT. You can easily discover the structure of the files. Time is in format of Java's System.currentTimeMillis().
+12. Use File/Export... to export logged data to CSV format table. The CSV file can be imported to your favourite spreadsheet application.
