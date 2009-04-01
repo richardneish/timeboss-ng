@@ -9,7 +9,8 @@
 <p>Timeboss is standalone desktop application that always asks you what and how long will you be doing. When the time is spent it asks again. All activity is logged to xml files so you will have genuine timesheet of your time facing your computer. There is an exporter that exports your activity to CSV table.</p>
 <p>Timeboss is written in Java and should work on all platforms that are supported by Java 6.</p>
 <p>Timeboss is free software hosted on <a href="https://sourceforge.net/projects/timeboss/">Sourceforge</a>.</p>
-<p>You can <a href="https://sourceforge.net/project/showfiles.php?group_id=248639">download</a> and use Timeboss in less then five minutes!</p>
+<p>Timeboss handles the <a href="https://bugs.edge.launchpad.net/ubuntu/+source/linux/+bug/317781/comments/45">Ext-4 data loss problem</a> fine by design :-)</p>
+<p>You can <a href="https://sourceforge.net/project/showfiles.php?group_id=248639">download</a> and use Timeboss in less than five minutes!</p>
 <h2>Timeboss is sitting on your system tray</h2>
 <p><strong>Timeboss always wants to know what you are doing.</strong></p>
 <p>So it is sitting on your system tray and keeps an eye on you:</p>
@@ -28,6 +29,29 @@
 <p><strong>Timeboss always wants to know what you are doing.</strong></p>
 <p>When your last activity is over it asks you for your current activity:</p>
 <img src="timeboss-warning.png"/>
+<h2>How to use</h2>
+<p>Add timeboss to your user's autorun program list! You can start the application using the following command:</p>
+<ul>
+	<li>java -jar timeboss.jar</li>
+</ul>
+A real life sequence:
+<ol>
+	<li>Tell Timeboss that you will work on issue #42 for 15 minutes</li>
+	<li>After 10 minutes you finish with issue #42 and start with issue #66</li>
+	<li>After 5 more minutes on #66 timeboss will ask you what you are doing. You say you are working on #66 for about 5 minutes and will be working on it for more 15 minutes.</li>
+	<li>After 10 more minutes a friend calls you on phone. You press not working on Timeboss.</li>
+	<li>Later you export this period. You will see that you worked 10 minutes on #42 and 15 minutes on #66. Actually the truth.</li>
+</ol>
+<h2>Export collected data</h2>
+<p>Use this menu to save the collected data in a single CSV file:</p>
+<img src="timeboss-export.png"/>
+<p>The collected data is separated by ; and text delimiter is ". It can be opened using your favourite spreadsheet application. The entries can be filtered using the spreadsheet application. It is easy to summarise the collected data:</p>
+<ol>
+	<li>Open the exported CSV using OpenOffice</li>
+	<li>On the import page select semicolon(;) as separator instead of comma(,)</li>
+	<li>You can filter data and create summaries using your spreadsheet application's capabilities</li>
+</ol>
+<img src="timeboss-sum.png"/>
 </body>
 </html>
 
