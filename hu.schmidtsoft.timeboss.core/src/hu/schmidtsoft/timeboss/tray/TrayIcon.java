@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class TrayIcon {
 
@@ -34,27 +35,24 @@ public class TrayIcon {
 
 	public synchronized static Image getIconWork() {
 		if (imageWork == null) {
-			imageWork = 
-				Toolkit.getDefaultToolkit()
-			.getImage(TrayIcon.class.getResource(ICON_IMAGE_WORK)); 
+			imageWork = Toolkit.getDefaultToolkit().getImage(
+					TrayIcon.class.getResource(ICON_IMAGE_WORK));
 		}
 		return imageWork;
 	}
 
 	public synchronized static Image getIconWhat() {
 		if (imageWhat == null) {
-			imageWhat =
-				Toolkit.getDefaultToolkit()
-				.getImage(TrayIcon.class.getResource(ICON_IMAGE_WHAT)); 
+			imageWhat = Toolkit.getDefaultToolkit().getImage(
+					TrayIcon.class.getResource(ICON_IMAGE_WHAT));
 		}
 		return imageWhat;
 	}
 
 	public synchronized static Image getIconRest() {
 		if (imageRest == null) {
-			imageRest =
-				Toolkit.getDefaultToolkit()
-				.getImage(TrayIcon.class.getResource(ICON_IMAGE_REST)); 
+			imageRest = Toolkit.getDefaultToolkit().getImage(
+					TrayIcon.class.getResource(ICON_IMAGE_REST));
 		}
 		return imageRest;
 	}
@@ -119,78 +117,99 @@ public class TrayIcon {
 				}
 			}
 		});
-		JFrame frame=TimeBossApplication.initApplication(setTitleEvent);
+		JFrame frame = TimeBossApplication.initApplication(setTitleEvent);
 		mainThread(frame, setTitleEvent);
 	}
 
 	java.awt.TrayIcon item;
 
 	Thread trayThread;
-	private boolean exit=false;
+	private boolean exit = false;
 	Thread th;
-	boolean listenerAdded=false;
-	boolean iconAdded=false;
+	boolean listenerAdded = false;
+	boolean iconAdded = false;
 
 	private void mainThread(final JFrame frame, UtilEvent setTitleEvent) {
-		th=Thread.currentThread();
-		final Image image = Toolkit.getDefaultToolkit()
-		.getImage(TrayIcon.class.getResource("icon-work.png"));
+		th = Thread.currentThread();
+		final Image image = Toolkit.getDefaultToolkit().getImage(
+				TrayIcon.class.getResource("icon-work.png"));
+		int notSupportedCounter = 0;
+		while (!exit) {
+			boolean b=SystemTray.isSupported();
+			if (b) {
+				// SystemTray tray = SystemTray.getSystemTray();
+				while (!exit) {
+					SystemTray tray = SystemTray.getSystemTray();
+					if (tray != null) {
+						if (!listenerAdded) {
+							tray.addPropertyChangeListener("trayIcons",
+									new PropertyChangeListener() {
+										@Override
+										public void propertyChange(
+												PropertyChangeEvent evt) {
+											th.interrupt();
+										}
+									});
+							listenerAdded = true;
+						}
+						java.awt.TrayIcon[] icons = tray.getTrayIcons();
+						if (icons == null || icons.length < 1) {
+							iconAdded = false;
+							try {
+								java.awt.TrayIcon trayIcon = new java.awt.TrayIcon(
+										image, "Tester2");
+								trayIcon.setImageAutoSize(true);
+								// trayIcon.addActionListener(new Li(trayIcon));
+								trayIcon.addMouseListener(new MouseAdapter() {
 
-		
-		if (SystemTray.isSupported()) {
-			// SystemTray tray = SystemTray.getSystemTray();
-			while (!exit) {
-				SystemTray tray = SystemTray.getSystemTray();
-				if (tray != null) {
-					if(!listenerAdded)
-					{
-						tray.addPropertyChangeListener("trayIcons", new PropertyChangeListener(){
-							@Override
-							public void propertyChange(PropertyChangeEvent evt) {
-								th.interrupt();
-							}});
-						listenerAdded=true;
-					}
-					java.awt.TrayIcon[] icons = tray.getTrayIcons();
-					if (icons == null || icons.length < 1) {
-						iconAdded=false;
-						try {
-							java.awt.TrayIcon trayIcon = new java.awt.TrayIcon(image, "Tester2");
-							trayIcon.setImageAutoSize(true);
-//							trayIcon.addActionListener(new Li(trayIcon));
-							trayIcon.addMouseListener(new MouseAdapter(){
-
-								@Override
-								public void mouseClicked(MouseEvent e) {
-									frame.setVisible(!frame.isVisible());
-								}
-							});
-							tray.add(trayIcon);
-							item=trayIcon;
-							updateLabel(trayIcon);
-							iconAdded=true;
-						} catch (Exception e) {
-							log.log(Level.SEVERE,
-									"Error restarting tray item", e);
+									@Override
+									public void mouseClicked(MouseEvent e) {
+										frame.setVisible(!frame.isVisible());
+									}
+								});
+								tray.add(trayIcon);
+								item = trayIcon;
+								updateLabel(trayIcon);
+								iconAdded = true;
+							} catch (Exception e) {
+								log.log(Level.SEVERE,
+										"Error restarting tray item", e);
+							}
 						}
 					}
-				}
-				try
-				{
-					if(iconAdded)
-					{
-						Thread.sleep(60000);
-					}else
-					{
-						Thread.sleep(4000);
+					try {
+						if (iconAdded) {
+							Thread.sleep(60000);
+						} else {
+							Thread.sleep(4000);
+						}
+					} catch (InterruptedException e) {
 					}
-				}catch(InterruptedException e){}
+				}
+			} else {
+				System.err
+						.println("Swing Tray icon is not supported by your platform.");
+				log
+						.log(Level.SEVERE,
+								"Swing Tray icon is not supported by your platform.");
+				notSupportedCounter++;
+				if (notSupportedCounter == 6) {
+					int val = JOptionPane
+							.showConfirmDialog(
+									null,
+									"Tray icon is not supported on your platform. Shut down timeboss?",
+									"Tray icon not supported",
+									JOptionPane.YES_NO_OPTION);
+					if (val == JOptionPane.YES_OPTION) {
+						System.exit(-1);
+					}
+				} else {
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+					}
+				}
 			}
-		}else
-		{
-			System.err.println("Swing Tray icon is not supported by your platform. Timeboss exits");
-			log.log(Level.SEVERE, "Swing Tray icon is not supported by your platform. Timeboss exits");
-			System.exit(-1);
 		}
 	}
 }
