@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,7 +34,7 @@ public class TimeBossPage {
 		public void actionPerformed(ActionEvent e) {
 			try
 			{
-				if(title.getText().length()<1)
+				if(title.getSelectedItem().toString().length()<1)
 				{
 					throw new RuntimeException("title must be set!");
 				}
@@ -48,15 +49,19 @@ public class TimeBossPage {
 					throw new NumberFormatException("Time can not be negative");
 				}
 				Activity toSave=new Activity(true,
-						project.getText(),
-						title.getText(),
+						project.getSelectedItem().toString(),
+						title.getSelectedItem().toString(),
 						description.getText(),
-						issue.getText(),
+						issue.getSelectedItem().toString(),
 						System.currentTimeMillis(),
 						lengthL,
 						preL
 						);
 				instance.getServer().saveActivity(toSave);
+				instance.getConfiguration().addProject(project.getSelectedItem().toString());
+				instance.getConfiguration().addActivityTitle(title.getSelectedItem().toString());
+				instance.getConfiguration().addIssue(issue.getSelectedItem().toString());
+				instance.getServer().setPreferences(instance.getConfiguration().toXml());
 			}catch(Exception ex)
 			{
 				JOptionPane.showMessageDialog(parent,
@@ -101,12 +106,12 @@ public class TimeBossPage {
 	JLabel finishTime;
 	JLabel lastActivity;
 	JTextField notWorkingTime;
-	JTextField title;
+	JComboBox title;
 	JTextArea description;
 	JTextField length;
 	JTextField pre;
-	JTextField project;
-	JTextField issue;
+	JComboBox project;
+	JComboBox issue;
 	JFrame parent;
 	int gridX=0;
 	int gridY=0;
@@ -128,11 +133,11 @@ public class TimeBossPage {
 		createLabel(ret, "Last activity lasts until:");
 		finishTime=createLabel(ret, "");
 		createLabel(ret, "project:");
-		project=createText(ret, "");
+		project=createComboBox(ret, instance.getConfiguration().getProjects().toArray());
 		createLabel(ret, "Activity Title:");
-		title=createText(ret, "");
+		title=createComboBox(ret, instance.getConfiguration().getActivityTitles().toArray());
 		createLabel(ret, "Issue:");
-		issue=createText(ret, "");
+		issue=createComboBox(ret, instance.getConfiguration().getIssues().toArray());
 		createLabel(ret, "Elapsed Time (up to now in minutes):");
 		pre=createText(ret, "0");
 		createLabel(ret, "Remaining Time (from now in minutes):");
@@ -172,9 +177,9 @@ public class TimeBossPage {
 				(lastAny.getStartTime()+
 				UtilTime.minToMilli(lastAny.getLength()))));
 		description.setText(last.getDescription());
-		title.setText(last.getTitle());
-		project.setText(last.getProject());
-		issue.setText(last.getIssue());
+		title.setSelectedItem(last.getTitle());
+		project.setSelectedItem(last.getProject());
+		issue.setSelectedItem(last.getIssue());
 		pre.setText("0");
 		if(last.getLength()<0)
 		{
@@ -194,6 +199,15 @@ public class TimeBossPage {
 		c.add(ret);
 		return ret;
 	}
+
+	private JComboBox createComboBox(JComponent c, Object[] strings) {
+		JComboBox ret=new JComboBox(strings);
+		ret.setEditable(true);
+		createGridConstraint(c, ret);
+		c.add(ret);
+		return ret;
+	}
+
 	private JTextArea createTextBig(JComponent c, String string) {
 
 		JTextArea ret=new JTextArea(string);
@@ -212,6 +226,7 @@ public class TimeBossPage {
 		ret.add(l);
 		return l;
 	}
+
 	private void createGridConstraint(JComponent ret, JComponent l) {
 		GridBagConstraints c=new GridBagConstraints();
 		c.gridx=gridX;
@@ -227,6 +242,7 @@ public class TimeBossPage {
 		((GridBagLayout)ret.getLayout()).setConstraints(l, 
 				c);
 	}
+
 	private JButton createButton(JComponent ret, String string) {
 		JButton b=new JButton(string);
 		createGridConstraint(ret, b);

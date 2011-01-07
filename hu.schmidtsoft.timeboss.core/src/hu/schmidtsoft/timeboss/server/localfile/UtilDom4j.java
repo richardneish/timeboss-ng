@@ -18,6 +18,7 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -123,6 +124,14 @@ public class UtilDom4j {
 			return Boolean.parseBoolean(e.getText());
 		}
 		return false;
+	}
+
+	public static List<String> getStrings(Document doc, String path) {
+		List<String> ret = new ArrayList<String>();
+		for (Object o : doc.getRootElement().selectNodes(path)) {
+			ret.add(((Node)o).getText());
+		}
+		return ret;
 	}
 
 }
