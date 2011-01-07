@@ -57,11 +57,24 @@ public class TimeBossPage {
 						lengthL,
 						preL
 						);
+
+				// Save the project, activity and issue to the config file.
 				instance.getServer().saveActivity(toSave);
 				instance.getConfiguration().addProject(project.getSelectedItem().toString());
 				instance.getConfiguration().addActivityTitle(title.getSelectedItem().toString());
 				instance.getConfiguration().addIssue(issue.getSelectedItem().toString());
 				instance.getServer().setPreferences(instance.getConfiguration().toXml());
+       
+        // Add project, activity and issue to the drop-down list if required.
+        if (project.getSelectedIndex() == -1) {
+          project.addItem(project.getSelectedItem());
+        }
+        if (title.getSelectedIndex() == -1) {
+          title.addItem(title.getSelectedItem());
+        }
+        if (issue.getSelectedIndex() == -1) {
+          issue.addItem(issue.getSelectedItem());
+        }
 			}catch(Exception ex)
 			{
 				JOptionPane.showMessageDialog(parent,
